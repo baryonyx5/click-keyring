@@ -4,7 +4,7 @@ import click
 import keyring
 from cryptography.fernet import Fernet
 
-__version__ = '1.0.0'
+__version__ = '0.1.0'
 
 
 service_name_rgx = re.compile(r'[\s.\-_]')
@@ -24,9 +24,7 @@ def create_service_name(*options):
     Returns:
         name (str): Combined string
     """
-    name = ''.join(str(o) for o in options)
-    svc = service_name_rgx.sub('', name)
-    return svc
+    return ''.join(str(o) for o in options)
 
 
 def keyring_option(*param_decls, prefix=None, user_option='username', other_options=None, encrypt=False, **attrs):
@@ -58,6 +56,9 @@ def keyring_option(*param_decls, prefix=None, user_option='username', other_opti
 
     """
     other_options = other_options or ()
+    # Ensure other_options is an iterable of strings
+    if isinstance(other_options, str):
+        other_options = (other_options, )
     cls = EncKeyRing if encrypt else KeyRing
 
     def decorator(f):
@@ -79,14 +80,15 @@ class KeyRing:
     def service(self, ctx):
         """Return keyring service name."""
         prefix = self.prefix or ctx.command.name
-        others = [self._get_options(ctx, o) for o in self.other_options]
-        svc = create_service_name(prefix, self.username(ctx), *others)
+        others = [self._get_option_values(ctx, o) for o in self.other_options]
+        svc = create_service_name(prefix, *others)
         return svc
 
     def username(self, ctx):
-        return self._get_options(ctx, self.user_option)
+        return self._get_option_values(ctx, self.user_option)
 
-    def _get_options(self, ctx, option):
+    @staticmethod
+    def _get_option_values(ctx, option):
         try:
             return ctx.params[option]
         except KeyError:
@@ -96,7 +98,8 @@ class KeyRing:
                 msg = '"{}" option must be provided before the password'.format(option)
             raise click.exceptions.BadOptionUsage('password', msg, ctx)
 
-    def _get_service(self, options):
+    @staticmethod
+    def _get_service(options):
         return '_'.join(str(o) for o in options)
 
     def get(self, ctx):
@@ -143,6 +146,7 @@ class EncKeyRing(KeyRing):
         return self.fernet.encrypt(pw.encode()).decode()
 
     def _init_f(self):
+        print(f'class key: {EncKeyRing.key}')
         err = 'No encrypt key found. Set ClickKeyRing.key class attribute or "CLICK_KEYRING_KEY" envvar'
         key = self.key or os.environ.get('CLICK_KEYRING_KEY')
         if not key:

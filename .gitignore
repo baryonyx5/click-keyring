@@ -2,6 +2,7 @@
 *.log
 *.log*
 **/*.pyc
+.tox/*
 .DS_Store
 **/.cache/
 dist

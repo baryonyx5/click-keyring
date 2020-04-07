@@ -31,11 +31,32 @@ def simple_cmd(username, password):
     The click command name (in this case "simple_cmd") is used as the prefix value by default.
     This can be overridden by setting `prefix="something"` on the `keyring_option` decorator.
     """
-    pass
+    click.echo()
+    click.echo('** Command Params. User: {}, Password: {}'.format(username, password))
 
 
 if __name__ == '__main__':
     simple_cmd()
+```
 
+When executed the first time, both username and password will be prompted
+
+```bash
+~/g/c/examples python ./simple.py                                                                         git:(master) ✗
+Username: testuser
+Password:
+
+** Command Params. User: testuser, Password: testpw
+~/g/c/examples
+```
+
+Subsequent executions using the same username will retrieve the password from the keyring backend.
+
+```bash
+~/g/c/examples python ./simple.py                                                                         git:(master) ✗
+Username: testuser
+
+** Command Params. User: testuser, Password: testpw
+~/g/c/examples
 ```
 
