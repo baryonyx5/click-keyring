@@ -4,7 +4,7 @@ import click
 import keyring
 from cryptography.fernet import Fernet
 
-__version__ = '0.1.0'
+__version__ = "0.1.0"
 
 
 service_name_rgx = re.compile(r'[\s.\-_]')
@@ -27,7 +27,14 @@ def create_service_name(*options):
     return ''.join(str(o) for o in options)
 
 
-def keyring_option(*param_decls, prefix=None, user_option='username', other_options=None, encrypt=False, **attrs):
+def keyring_option(
+    *param_decls,
+    prefix=None,
+    user_option='username',
+    other_options=None,
+    encrypt=False,
+    **attrs,
+):
     """
     Click option decorator for passwords stored in keyring.
 
@@ -58,7 +65,7 @@ def keyring_option(*param_decls, prefix=None, user_option='username', other_opti
     other_options = other_options or ()
     # Ensure other_options is an iterable of strings
     if isinstance(other_options, str):
-        other_options = (other_options, )
+        other_options = (other_options,)
     cls = EncKeyRing if encrypt else KeyRing
 
     def decorator(f):
@@ -67,11 +74,11 @@ def keyring_option(*param_decls, prefix=None, user_option='username', other_opti
         attrs.setdefault('confirmation_prompt', False)
         attrs['callback'] = cls(prefix, user_option, other_options)
         return click.option(*(param_decls or ('--password',)), **attrs)(f)
+
     return decorator
 
 
 class KeyRing:
-
     def __init__(self, prefix=None, username_option='username', other_options=None):
         self.prefix = prefix
         self.user_option = username_option
@@ -93,7 +100,9 @@ class KeyRing:
             return ctx.params[option]
         except KeyError:
             if option not in [p.name for p in ctx.command.params]:
-                msg = 'Option "{}" does not exist on command "{}"'.format(option, ctx.command.name)
+                msg = 'Option "{}" does not exist on command "{}"'.format(
+                    option, ctx.command.name
+                )
             else:
                 msg = '"{}" option must be provided before the password'.format(option)
             raise click.exceptions.BadOptionUsage('password', msg, ctx)
@@ -146,8 +155,8 @@ class EncKeyRing(KeyRing):
         return self.fernet.encrypt(pw.encode()).decode()
 
     def _init_f(self):
-        print(f'class key: {EncKeyRing.key}')
-        err = 'No encrypt key found. Set ClickKeyRing.key class attribute or "CLICK_KEYRING_KEY" envvar'
+        err = 'No encrypt key found. Set ClickKeyRing.key ' \
+              'class attribute or "CLICK_KEYRING_KEY" envvar'
         key = self.key or os.environ.get('CLICK_KEYRING_KEY')
         if not key:
             click.exceptions.ClickException(err)

@@ -3,7 +3,7 @@ import io
 import re
 from setuptools import setup, find_packages
 
-_version_rgx = re.compile(r'__version__\s+=\s+(.*)')
+_version_rgx = re.compile(r'__version__\s+=\s+"(.*)"')
 
 
 with io.open("./click_keyring/__init__.py", "rt", encoding="utf8") as fh:

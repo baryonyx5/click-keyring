@@ -1,4 +1,3 @@
-import re
 import pytest
 import keyring.backend
 from collections import defaultdict

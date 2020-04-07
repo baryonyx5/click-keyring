@@ -14,16 +14,15 @@ def simple_cmd(username, password, clean_up):
     """
     Example of click_keyring using defaults.
 
-    The password will be saved to keyring with service name:
+    The password will be saved to keyring with service name
+    matching the click command name (in this case "simple_cmd").
 
-        `{prefix value}{username value}`
-
-    The click command name (in this case "simple_cmd") is used as the prefix value by default.
-    This can be overridden by setting `prefix="something"` on the `keyring_option` decorator.
+    This can be overridden by setting `prefix` and/or `keyring_option`
+     on the decorator.
     """
-    echo_setup(simple_cmd, 'simple_cmd', 'username')
+    echo_setup(simple_cmd, simple_cmd.name, 'username')
     echo_input(username=username, password=password)
-    echo_result('simple_cmd', username)
+    echo_result(simple_cmd.name, username)
 
 
 if __name__ == '__main__':

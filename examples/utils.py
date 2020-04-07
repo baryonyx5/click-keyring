@@ -55,7 +55,7 @@ def echo_input(**kwargs):
 
 
 def echo_result(prefix, username, *options):
-    service = create_service_name(prefix, username, *options)
+    service = create_service_name(prefix, *options)
     backend = keyring.get_keyring().name
     value = keyring.get_password(service, username)
     click.echo(
@@ -68,7 +68,7 @@ def echo_result(prefix, username, *options):
 
 
 def decrypt_result(prefix, username, *options):
-    service = create_service_name(prefix, username, *options)
+    service = create_service_name(prefix, *options)
     f = Fernet(os.environ['CLICK_KEYRING_KEY'])
     val = f.decrypt(keyring.get_password(service, username).encode())
     click.echo(' - Decrypted: "{}"'.format(val.decode()))

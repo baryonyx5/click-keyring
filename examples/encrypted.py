@@ -21,17 +21,18 @@ def encrypt_cmd(username, password, clean_up):
     Encrypting the password protects it from other applications that may access
     the os credential storage system.
 
-    The password will be encrypted using fernet symmetric encryption (https://cryptography.io/en/latest/fernet/)
+    The password will be encrypted using fernet symmetric encryption
+    (https://cryptography.io/en/latest/fernet/)
 
     You must set the `CLICK_KEYRING_KEY` environment variable to a valid encryption
     key.
 
     The same key used to save a credential must also be used to retrieve it later.
     """
-    echo_setup(encrypt_cmd, 'encrypt_cmd', 'username')
+    echo_setup(encrypt_cmd, encrypt_cmd.name, 'username')
     echo_input(username=username, password=password)
-    echo_result('encrypt_cmd', username)
-    decrypt_result('encrypt_cmd', username)
+    echo_result(encrypt_cmd.name, username)
+    decrypt_result(encrypt_cmd.name, username)
 
 
 if __name__ == '__main__':
