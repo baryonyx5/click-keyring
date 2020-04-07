@@ -25,6 +25,7 @@ keyring = "^21.0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
+# tox 3.8.0 and later have issues with MacOS https://github.com/tox-dev/tox/issues/1485
 tox = "<3.8.0"
 
 [build-system]
