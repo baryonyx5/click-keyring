@@ -9,6 +9,11 @@ When a command is decorated with `click-keyring`:
 * If not found, the user is prompted to enter a password.
 * The new password is then saved to the keyring backend.
 
+## Installation
+```bash
+pip install click-keyring
+```
+
 ## Example
 See the examples folder for additional examples.
 
