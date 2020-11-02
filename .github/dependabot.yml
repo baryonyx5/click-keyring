@@ -11,5 +11,5 @@ updates:
       interval: "monthly"
     labels:
       - "enhancement"
-     reviewers:
+    reviewers:
       - "baryonyx5"
