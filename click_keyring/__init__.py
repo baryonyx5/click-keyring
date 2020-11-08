@@ -95,17 +95,39 @@ class KeyRing:
         return self._get_option_values(ctx, self.user_option)
 
     @staticmethod
-    def _get_option_values(ctx, option):
-        try:
-            return ctx.params[option]
-        except KeyError:
-            if option not in [p.name for p in ctx.command.params]:
-                msg = 'Option "{}" does not exist on command "{}"'.format(
-                    option, ctx.command.name
-                )
-            else:
-                msg = '"{}" option must be provided before the password'.format(option)
-            raise click.exceptions.BadOptionUsage('password', msg, ctx)
+    def _get_option_values(ctx: click.Context, option: str):
+        """Get the value of the specified option in the given context. Use the passed value or use the default.
+
+        Args:
+            ctx (click.Context): CLI context
+            option (str): name of the option whose value to be found
+
+        Raises:
+            click.exceptions.BadOptionUsage: if option name is not one of existing parameters or if there is no value.
+
+        Returns:
+            str: value for option
+        """        
+        # first, check if option is really one of the parameters (args and options)
+        if option not in [p.name for p in ctx.command.params]:
+            msg = 'Option "{}" does not exist on command "{}"'.format(
+                option, ctx.command.name
+            )
+            raise click.exceptions.BadOptionUsage(option, msg, ctx)
+
+        # if the option has been directly passed in the command, then return the given value
+        if option in ctx.params:
+            return ctx.params.get(option)
+
+        # if not, get the option index in parameters in order to get its default value
+        option_idx = [o.name for o in ctx.command.get_params(ctx)].index(option)
+
+        # if not default value, then raise error
+        if ctx.command.get_params(ctx)[option_idx].default is None:
+            msg = '"{}" option must be provided before the password'.format(option)
+            raise click.exceptions.BadOptionUsage(option, msg, ctx)
+        
+        return ctx.command.get_params(ctx)[option_idx].default
 
     @staticmethod
     def _get_service(options):
