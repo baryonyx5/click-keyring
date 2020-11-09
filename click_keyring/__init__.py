@@ -95,14 +95,17 @@ class KeyRing:
         return self._get_option_values(ctx, self.user_option)
 
     def _get_option_values(self, ctx: click.Context, option: str):
-        """Get the value of the specified option in the given context. Use the passed value or use the default.
+        """
+        Get the value of the specified option in the given context.
+        Use the passed value or use the default.
 
         Args:
             ctx (click.Context): CLI context
             option (str): name of the option whose value to be found
 
         Raises:
-            click.exceptions.BadOptionUsage: if option name is not one of existing parameters or if there is no value.
+            click.exceptions.BadOptionUsage: if option name is not one of
+            existing parameters or if there is no value.
 
         Returns:
             str: value for option
@@ -127,11 +130,24 @@ class KeyRing:
 
     @staticmethod
     def _get_option_defaults(ctx, option):
-        # if not, get the option index in parameters in order to get its default value
-        option_idx = [o.name for o in ctx.command.get_params(ctx)].index(option)
+        """
+        Get the default value for the specified option, if defined.
 
-        # look for default value provided as option attribute
+        The default may be set on the option decorator using the `default` keyword
+        or the default may be set in the context default map.
+
+        If both are defined, the option default value is returned.
+
+        Args:
+            ctx (click.Context): CLI context
+            option (str): name of the option whose value to be found
+
+        Returns:
+            default (None, str): default value for option or None
+        """
+        option_idx = [o.name for o in ctx.command.get_params(ctx)].index(option)
         default = ctx.command.get_params(ctx)[option_idx].default
+
         if default is None:
             default = ctx.lookup_default(option)
 
