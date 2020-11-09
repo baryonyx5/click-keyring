@@ -27,4 +27,5 @@ tests/test_env
 .python-version
 compose/*
 **/__pycache__
-dockerfile.orig
+tags
+pyrightconfig.json
