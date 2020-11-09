@@ -104,29 +104,68 @@ def test_cli_user_as_arg_pw_as_arg_with_defaults():
     assert keyring.get_password(cli.name, expecteduser) == expectedpw
 
 
-def test_cli_user_as_arg_pw_from_default():
+def test_cli_user_as_arg_pw_from_option_default():
     """
-    Given a click_keyring cli function with default values defined
+    Given a click_keyring cli function with password default value
+    set on the option
     When passing the username as option argument with password
     Then the command runs successfully with the default password used
     """
     expecteduser = arguser
     expectedpw = defpw
     runner = CliRunner()
-    cli = make_cli()
+    cli = make_cli(keyring_opts=dict(default=defpw))
 
-    result = runner.invoke(
-        cli, args=["-u", arguser], default_map={"username": defuser, "password": defpw}
-    )
+    result = runner.invoke(cli, args=["-u", arguser])
 
     assert result.exit_code == 0
     assert format_result(expecteduser, expectedpw) in result.output
     assert keyring.get_password(cli.name, expecteduser) == expectedpw
 
 
-def test_cli_user_password_from_defaults():
+def test_cli_user_and_password_from_option_defaults():
     """
     Given a click_keyring cli function with default values defined
+    on the options
+    When neither the username or password are provided as arguments
+    Then the command runs successfully with the default values used
+    """
+    expecteduser = defuser
+    expectedpw = defpw
+    runner = CliRunner()
+    cli = make_cli(
+        keyring_opts=dict(default=defpw), user_opts=dict(prompt=False, default=defuser)
+    )
+
+    result = runner.invoke(cli, args=[])
+
+    assert result.exit_code == 0
+    assert format_result(expecteduser, expectedpw) in result.output
+    assert keyring.get_password(cli.name, expecteduser) == expectedpw
+
+
+def test_cli_user_from_option_default_pw_as_arg():
+    """
+    Given a click_keyring cli function with username default defined
+    on the option
+    When passing the password as option argument without a username
+    Then the command runs successfully with the default username used
+    """
+    expecteduser = defuser
+    expectedpw = argpw
+    runner = CliRunner()
+    cli = make_cli(user_opts=dict(prompt=False, default=defuser))
+
+    result = runner.invoke(cli, args=["-p", argpw])
+    assert result.exit_code == 0
+    assert format_result(expecteduser, expectedpw) in result.output
+    assert keyring.get_password(cli.name, expecteduser) == expectedpw
+
+
+def test_cli_user_and_password_from_default_map():
+    """
+    Given a click_keyring cli function with default values defined
+    in the ctx default_map
     When neither the username or password are provided as arguments
     Then the command runs successfully with the default values used
     """
@@ -144,19 +183,40 @@ def test_cli_user_password_from_defaults():
     assert keyring.get_password(cli.name, expecteduser) == expectedpw
 
 
-def test_cli_user_from_default_pw_as_arg():
+def test_cli_user_from_default_map_pw_as_arg():
     """
-    Given a click_keyring cli function with default values defined
+    Given a click_keyring cli function with username default defined
+    in the ctx default_map
     When passing the password as option argument without a username
     Then the command runs successfully with the default username used
     """
     expecteduser = defuser
     expectedpw = argpw
     runner = CliRunner()
-    cli = make_cli(prompt_user=False)
+    cli = make_cli()
 
     result = runner.invoke(
         cli, args=["-p", argpw], default_map={"username": defuser, "password": defpw}
+    )
+    assert result.exit_code == 0
+    assert format_result(expecteduser, expectedpw) in result.output
+    assert keyring.get_password(cli.name, expecteduser) == expectedpw
+
+
+def test_cli_user_as_arg_pw_from_default_map():
+    """
+    Given a click_keyring cli function with password default defined
+    in the ctx default_map
+    When passing the username as option argument without a password
+    Then the command runs successfully with the default password used
+    """
+    expecteduser = arguser
+    expectedpw = defpw
+    runner = CliRunner()
+    cli = make_cli()
+
+    result = runner.invoke(
+        cli, args=["-u", arguser], default_map={"username": defuser, "password": defpw}
     )
     assert result.exit_code == 0
     assert format_result(expecteduser, expectedpw) in result.output

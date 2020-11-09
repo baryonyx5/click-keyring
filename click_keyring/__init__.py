@@ -94,8 +94,7 @@ class KeyRing:
     def username(self, ctx):
         return self._get_option_values(ctx, self.user_option)
 
-    @staticmethod
-    def _get_option_values(ctx: click.Context, option: str):
+    def _get_option_values(self, ctx: click.Context, option: str):
         """Get the value of the specified option in the given context. Use the passed value or use the default.
 
         Args:
@@ -119,15 +118,24 @@ class KeyRing:
         if option in ctx.params:
             return ctx.params.get(option)
 
+        # look for default value if not found, raise error
+        default = self._get_option_defaults(ctx, option)
+        if default is None:
+            msg = '"{}" option must be provided before the password'.format(option)
+            raise click.exceptions.BadOptionUsage(option, msg, ctx)
+        return default
+
+    @staticmethod
+    def _get_option_defaults(ctx, option):
         # if not, get the option index in parameters in order to get its default value
         option_idx = [o.name for o in ctx.command.get_params(ctx)].index(option)
 
-        # if not default value, then raise error
-        if ctx.command.get_params(ctx)[option_idx].default is None:
-            msg = '"{}" option must be provided before the password'.format(option)
-            raise click.exceptions.BadOptionUsage(option, msg, ctx)
+        # look for default value provided as option attribute
+        default = ctx.command.get_params(ctx)[option_idx].default
+        if default is None:
+            default = ctx.lookup_default(option)
 
-        return ctx.command.get_params(ctx)[option_idx].default
+        return default
 
     @staticmethod
     def _get_service(options):

@@ -45,12 +45,13 @@ def format_result(*args):
     return "CLI INPUT: {}".format("|".join(a for a in args))
 
 
-def make_cli(keyring_opts=None, prompt_user=True):
-    keyring_opts = keyring_opts or dict()
-    user_opts = dict(prompt="Username") if prompt_user else dict()
+def make_cli(keyring_opts=None, user_opts=None, other_opts=None):
+    keyring_opts = dict() if keyring_opts is None else keyring_opts
+    user_opts = dict(prompt="Username") if user_opts is None else user_opts
+    other_opts = dict(default="other_default") if other_opts is None else other_opts
 
     @click_keyring.keyring_option("-p", "--password", **keyring_opts)
-    @click.option("-o", "--other", default="other_default")
+    @click.option("-o", "--other", **other_opts)
     @click.option("-u", "--username", **user_opts)
     @click.command(name="cli")
     def cli(username, password, other):
