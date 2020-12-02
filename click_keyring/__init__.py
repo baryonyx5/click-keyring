@@ -4,7 +4,7 @@ import click
 import keyring
 from cryptography.fernet import Fernet
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 
 service_name_rgx = re.compile(r"[\s.\-_]")

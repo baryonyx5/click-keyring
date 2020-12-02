@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "click-keyring"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Kris Seraphine <kris.seraphine@gmail.com>"]
 description = "A click option decorator to store and retrieve credentials using keyring."
 readme = "README.md"
