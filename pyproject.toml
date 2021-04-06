@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "click-keyring"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Kris Seraphine <kris.seraphine@gmail.com>"]
 description = "A click option decorator to store and retrieve credentials using keyring."
 readme = "README.md"
@@ -18,10 +18,10 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"
-cryptography = "^2.9"
-click = "^7.1.1"
-keyring = "^21.0.0"
+python = ">=3.6"
+cryptography = ">=2.9"
+click = ">=7.1.1"
+keyring = ">=21.0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
